@@ -1,0 +1,27 @@
+{
+  "name": "mandy-logs",
+  "version": "1.0.0",
+  "description": "logs for node js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mandeep-bhatti/mandy-logs.git"
+  },
+  "keywords": [
+    "logs",
+    "logger",
+    "winston"
+  ],
+  "author": "Mandeep-bhatti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mandeep-bhatti/mandy-logs/issues"
+  },
+  "homepage": "https://github.com/Mandeep-bhatti/mandy-logs#readme",
+  "dependencies": {
+    "winston": "^3.8.2"
+  }
+}
