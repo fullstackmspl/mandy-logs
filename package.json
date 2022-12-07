@@ -23,5 +23,8 @@
   "homepage": "https://github.com/Mandeep-bhatti/mandy-logs#readme",
   "dependencies": {
     "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.29.0"
   }
 }
