@@ -1,5 +1,4 @@
 "use strict";
-const fs = requiire("fs")
 const winston = require("winston");
 const moduler = function (options = {}) {
 
@@ -16,7 +15,7 @@ const moduler = function (options = {}) {
         transports.push(new winston.transports.File({
             level: options.transport.level ?? "debug",
             filename: options.transport.filename,
-            format: winston.format.combine(winston.format.timestamp(), winston.format.ms(),winston.format.json()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.ms(), winston.format.json()),
             maxSize: options.transport.maxSize ?? 5000000,
             maxFile: options.transport.maxFile ?? 5,
             handleExceptions: true,
@@ -31,7 +30,7 @@ const moduler = function (options = {}) {
                     winston.format.colorize(),
                     winston.format.ms(),
                     winston.format.simple(),
-                    ),
+                ),
                 handleExceptions: true,
             })
         )
@@ -70,59 +69,59 @@ const moduler = function (options = {}) {
         logger.info("Logs ended.")
     });
 
-  
-    const logContainer = (param, parent) => {
-        const child = parent && parent.child ? `${parent.child}:${param}` : param;
-const self = this
+    // const combileToString = function(param,parent){
+    // if(parent)
+    // }
+    const logContainer = (param) => {
+        const self = this
         return {
-            child: child,
             info: function () {
-                logger.info(arguments[0]);
-                return logContainer()
+                logger.info(param ? `${param}:${ arguments[0]}`:arguments[0]);
+                return self;
             },
             error: function () {
-                logger.error(arguments[0]);
-                return logContainer()
+                logger.info(param ? `${param}:${ arguments[0]}`:arguments[0]);
+                return self;
             },
             warn: function () {
-                logger.error(arguments[0]);
-                return logContainer()
-
+                logger.info(param ? `${param}:${ arguments[0]}`:arguments[0]);
+                return self;
             },
             finsih: function () {
-                const date =new Date()
+                const date = new Date()
                 const takenTime = (this.startTime / new Date()) / 1000
-                logger.info(`delay=${takenTime} seconds(s) , time =${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
-                 return self;
-            } ,
-            close:function(){
+                logger.info(`${param}, delay=${takenTime} seconds(s) , time=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+                return self;
+            },
+            close: function () {
                 logger.warn("log has been closed.")
                 logger.end()
-            }
+            },
+            addLogger :addNewLogger,
         }
     }
     logger.run = function (param) {
-        const newLogger = logContainer(param, logger);
+        const newLogger = logContainer(param);
         newLogger.startTime = new Date();
         return newLogger
     }
- 
+
     return logger
 }
 
 
-//module.exports = moduler
- const options={
-    transport:{
-        level:"debug",
-        filename:"./log.json",
-        handleExceptions:true,
+const options = {
+    transport: {
+        level: "debug",
+        filename: "./log.json",
+        handleExceptions: true,
     },
-     console:{
-        level:"debug",
-     }
- }
-const lo =moduler(options).info("name");
-lo.warn("warning");
-lo.close();
-lo.info("ok")
+    console: {
+        level: "debug",
+    }
+}
+const lo = moduler(options).run("name");
+lo.finsih()
+
+
+module.exports = moduler
