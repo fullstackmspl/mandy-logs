@@ -1,6 +1,6 @@
 "use strict";
+const fs = requiire("fs")
 const winston = require("winston");
-
 const moduler = function (options = {}) {
 
     if (!typeof options === "object") {
@@ -13,10 +13,10 @@ const moduler = function (options = {}) {
     });
 
     if ("transport" in options) {
-        transports.push(new winston.transport.File({
+        transports.push(new winston.transports.File({
             level: options.transport.level ?? "debug",
             filename: options.transport.filename,
-            format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.ms(),winston.format.json()),
             maxSize: options.transport.maxSize ?? 5000000,
             maxFile: options.transport.maxFile ?? 5,
             handleExceptions: true,
@@ -25,14 +25,13 @@ const moduler = function (options = {}) {
 
     if ("console" in options) {
         transports.push(
-            new winston.transport.Console({
-                level: options.console.level ?? "debug",
+            new winston.transports.Console({
+                level: options.console.level ?? "info",
                 format: winston.format.combine(
                     winston.format.colorize(),
                     winston.format.ms(),
                     winston.format.simple(),
-                    streamFormat,
-                    winston.format.json(),),
+                    ),
                 handleExceptions: true,
             })
         )
@@ -42,8 +41,9 @@ const moduler = function (options = {}) {
             level: options.http.level ?? "warn",
             format: winston.format.combine(
                 winston.format.colorize(),
-                winston.format.simple(),
-                winston.format.json()
+                // winston.format.simple(),
+                winston.format.json(),
+                winston.format.simple()
             )
         }))
     }
@@ -59,7 +59,7 @@ const moduler = function (options = {}) {
         if (!typeof options === "object") {
             throw new SyntaxError("add logger argument must an object")
         }
-        winston.add(new winston.transport[`${options.type}`]({
+        winston.add(new winston.transports[`${options.type}`]({
             level: options.level,
             format: winston.format.combine(winston.format.simple(), winston.format.json())
         }))
@@ -70,41 +70,59 @@ const moduler = function (options = {}) {
         logger.info("Logs ended.")
     });
 
-    const combineMessage = function (arg, parent) {
-        // if (typeof arg === "string") {
-        //     arg = parent ? `${parent}:${arg}` : arg
-        // } else if (typeof arg === "object") {
-        //     Array.unShift.apply(this, arg, parent)
-        // }
-        // return arg
-    }
+  
     const logContainer = (param, parent) => {
         const child = parent && parent.child ? `${parent.child}:${param}` : param;
-
+const self = this
         return {
             child: child,
             info: function () {
-                logger.info(arguments[0])
+                logger.info(arguments[0]);
+                return logContainer()
             },
             error: function () {
-                logger.error(arguments[0])
+                logger.error(arguments[0]);
+                return logContainer()
             },
             warn: function () {
-                logger.error(arguments[0])
+                logger.error(arguments[0]);
+                return logContainer()
+
             },
             finsih: function () {
+                const date =new Date()
                 const takenTime = (this.startTime / new Date()) / 1000
-                logger.info(`delay=${takenTime} seconds(s)`)
+                logger.info(`delay=${takenTime} seconds(s) , time =${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
+                 return self;
+            } ,
+            close:function(){
+                logger.warn("log has been closed.")
+                logger.end()
             }
         }
     }
     logger.run = function (param) {
         const newLogger = logContainer(param, logger);
         newLogger.startTime = new Date();
+        return newLogger
     }
+ 
     return logger
 }
 
 
-module.exports = moduler
-console.log(moduler())
+//module.exports = moduler
+ const options={
+    transport:{
+        level:"debug",
+        filename:"./log.json",
+        handleExceptions:true,
+    },
+     console:{
+        level:"debug",
+     }
+ }
+const lo =moduler(options).info("name");
+lo.warn("warning");
+lo.close();
+lo.info("ok")
