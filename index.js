@@ -84,7 +84,7 @@ const moduler = function (options = {}) {
                 warn: function () {
                     logger.warn(param ? `${param}:${arguments[0]}` : arguments[0]);
                 },
-                finsih: function () {
+                finish: function () {
                     const date = new Date()
                     const takenTime = (this.startTime / new Date()) / 1000
                     logger.info(`${param}, delay=${takenTime} seconds(s) , time=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
